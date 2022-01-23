@@ -61,6 +61,7 @@ async function run(){
     const BookingCollection = database.collection('booking');
     const usersCollection = database.collection('users');
     const reviewCollection = database.collection('review');
+    const servicesCollection2 = database.collection('services');
 
     // GET API
 
@@ -72,7 +73,16 @@ async function run(){
         // console.log(services)
         res.send(services);
       })
+//  SERVICES
+app.get("/services", async(req,res) =>{
+   
+    const cursor = servicesCollection2.find({});
 
+    const services = await cursor.toArray();
+    console.log(services)
+    console.log(services)
+    res.send(services);
+  })
 
       app.post('/addCars', async(req, res)=>{
         const service = req.body;
