@@ -60,6 +60,7 @@ async function run(){
     const servicesCollection = database.collection("all-car-show");
     const BookingCollection = database.collection('booking');
     const usersCollection = database.collection('users');
+    const reviewCollection = database.collection('review');
 
     // GET API
 
@@ -70,6 +71,17 @@ async function run(){
         const services = await cursor.toArray();
         // console.log(services)
         res.send(services);
+      })
+
+
+      app.post('/addCars', async(req, res)=>{
+        const service = req.body;
+    //    console.log('hit the post api', service);
+      
+      
+      const result = await servicesCollection.insertOne(service)
+      console.log(result);
+      res.json(result)
       })
 
       // get single package
@@ -90,6 +102,27 @@ async function run(){
         res.json(result)
     });
 
+// review post
+
+app.post('/review', async (req, res) => {
+    const appointment = req.body;
+    const result = await reviewCollection.insertOne(appointment);
+    
+    console.log(result);
+    res.json(result)
+});
+
+
+// review get
+app.get("/review", async(req,res) =>{
+   
+    const cursor = reviewCollection.find({});
+
+    const services = await cursor.toArray();
+    console.log(services)
+    // console.log(services)
+    res.send(services);
+  })
 
     // BOOKING GET
     app.get("/myBooking/:email", async (req, res) => {
@@ -97,6 +130,16 @@ async function run(){
         // console.log(result)
         res.json(result);
     });
+// ALL BOKKING
+
+    app.get("/AllBooking", async(req,res) =>{
+   
+        const cursor = BookingCollection.find({});
+        // console.log(cursor)
+        const services = await cursor.toArray();
+        console.log(services)
+        res.send(services);
+      })
 
 
 // BOOKING DELETED
@@ -107,7 +150,19 @@ async function run(){
         console.log(result)
         res.json(result);
     });
-
+ //  update products
+ app.put("/CnfirmOrder/:id", async (req, res) => {
+    const id = req.params.id;
+    console.log('id ',id)
+    const filter = { _id: ObjectId(id) };
+    const result = await BookingCollection.updateOne(filter, {
+        $set: {
+            status: "Confirmed",
+        },
+    });
+    console.log(result)
+    res.json(result);
+});
 // SAVE USER DATA
 
 app.post('/users', async (req, res) => {
